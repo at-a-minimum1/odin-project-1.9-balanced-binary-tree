@@ -12,13 +12,26 @@ class Tree {
 }
 
 // TODO Write a buildTree(array) function that takes an array of data (e.g., [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]) and turns it into a balanced binary tree full of Node objects appropriately placed (don’t forget to sort and remove duplicates!). The buildTree function should return the level-0 root node.
-function buildTree(array) {
-	let leftArray = [];
-	let rightArray = [];
-	let midPoint;
-	let myTree = new Tree(midPoint);
+function buildTree(inputArray) {
+	inputArray.join();
+	inputArray.sort(function (a, b) {
+		return a - b;
+	});
+	let leftArray = inputArray.slice(0, inputArray.length / 2 - 1);
+	let rightArray = inputArray.slice(inputArray.length / 2 + 1);
+	// let midPointRoot = inputArray[inputArray.length() / 2];
+	let midPointRoot = (inputArray[0] + inputArray[inputArray.length() - 1]) / 2;
+	// let leftChildren = (leftArray) => {
+	// 	let midPoint = leftArray[leftArray.length() / 2];
+	// 	leftArray.forEach((element) => {});
+	// };
+	// let rightChildren = (rightArray) => {
+	// 	let midPoint = rightArray[rightArray.length() / 2];
+	// };
+	let rootNode = new Node(midPointRoot, leftChildren, rightChildren);
+
 	// insert build logic here
-	return myTree;
+	return rootNode;
 }
 
 // TODO Write insert(value) and deleteItem(value) functions that insert/delete the given value. You’ll have to deal with several cases for delete, such as when a node has children or not. If you need additional resources, check out these two articles on inserting and deleting, or this video with several visual examples.
