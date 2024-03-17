@@ -12,24 +12,50 @@ class Tree {
 }
 
 // TODO Write a buildTree(array) function that takes an array of data (e.g., [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]) and turns it into a balanced binary tree full of Node objects appropriately placed (don’t forget to sort and remove duplicates!). The buildTree function should return the level-0 root node.
-function buildTree(inputArray) {
+function prepareArray(inputArray) {
 	inputArray.join();
 	inputArray.sort(function (a, b) {
 		return a - b;
 	});
-	let leftArray = inputArray.slice(0, inputArray.length / 2 - 1);
-	let rightArray = inputArray.slice(inputArray.length / 2 + 1);
-	// let midPointRoot = inputArray[inputArray.length() / 2];
-	let midPointRoot = (inputArray[0] + inputArray[inputArray.length() - 1]) / 2;
+	let unique = [];
+	inputArray.forEach((element) => {
+		if (!unique.includes(element)) {
+			unique.push(element);
+		}
+	});
+
+	return unique;
+}
+
+function buildTree(inputArray) {
+	let preparedArray = prepareArray(inputArray);
+
+	let leftArray = preparedArray.slice(0, preparedArray.length / 2 - 1);
+	let rightArray = preparedArray.slice(preparedArray.length / 2 + 1);
+	let midPointLocation = Math.trunc(preparedArray.length / 2);
+	let midPointRoot = preparedArray[midPointLocation];
+
 	// let leftChildren = (leftArray) => {
-	// 	let midPoint = leftArray[leftArray.length() / 2];
+	// 	let midPoint = leftArray[leftArray.length / 2];
 	// 	leftArray.forEach((element) => {});
 	// };
 	// let rightChildren = (rightArray) => {
-	// 	let midPoint = rightArray[rightArray.length() / 2];
+	// 	let midPoint = rightArray[rightArray.length / 2];
 	// };
-	let rootNode = new Node(midPointRoot, leftChildren, rightChildren);
+	let leftChild = preparedArray[midPointLocation - 1];
+	let rightChild = preparedArray[midPointLocation + 1];
 
+	let rootNode = new Node(midPointRoot, leftChild, rightChild);
+	console.log(preparedArray);
+	console.log(preparedArray.length);
+	console.log(midPointLocation);
+	console.log(
+		`left array${leftArray} right array: ${rightArray} root node: ${midPointRoot}`
+	);
+	console.log(
+		`left child: ${leftChild} right child: ${rightChild} root node: ${midPointRoot}`
+	);
+	console.log(rootNode.leftChildren);
 	// insert build logic here
 	return rootNode;
 }
@@ -72,4 +98,12 @@ function driverScript() {
 	// 6) Balance the tree by calling rebalance.
 	// 7) Confirm that the tree is balanced by calling isBalanced.
 	// 8) Print out all elements in level, pre, post, and in order.
+	let sampleArray = [33, 42, 90, 33, 400, 86, 30, 45];
+	let builtTree = buildTree(sampleArray);
+	// const myTree = new Tree();
+
+	console.log("Driver script running");
+	console.log(builtTree);
 }
+
+driverScript();
