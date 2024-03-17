@@ -27,36 +27,38 @@ function prepareArray(inputArray) {
 	return unique;
 }
 
+
+
 function buildTree(inputArray) {
-	let preparedArray = prepareArray(inputArray);
+	let rootNode;
+	if (inputArray.length == 1) {
+		rootNode = new Node(inputArray[0], null, null);
+	} else {
+		let preparedArray = prepareArray(inputArray);
+		let midPointLocation = Math.trunc(preparedArray.length / 2);
 
-	let leftArray = preparedArray.slice(0, preparedArray.length / 2 - 1);
-	let rightArray = preparedArray.slice(preparedArray.length / 2 + 1);
-	let midPointLocation = Math.trunc(preparedArray.length / 2);
-	let midPointRoot = preparedArray[midPointLocation];
+		let leftArray = preparedArray.slice(0, midPointLocation);
+		let rightArray = preparedArray.slice(midPointLocation + 1);
+		let midPointRoot = preparedArray[midPointLocation];
 
-	// let leftChildren = (leftArray) => {
-	// 	let midPoint = leftArray[leftArray.length / 2];
-	// 	leftArray.forEach((element) => {});
-	// };
-	// let rightChildren = (rightArray) => {
-	// 	let midPoint = rightArray[rightArray.length / 2];
-	// };
-	let leftChild = preparedArray[midPointLocation - 1];
-	let rightChild = preparedArray[midPointLocation + 1];
+		let leftChild = preparedArray[midPointLocation - 1];
+		let rightChild = preparedArray[midPointLocation + 1];
 
-	let rootNode = new Node(midPointRoot, leftChild, rightChild);
-	console.log(preparedArray);
-	console.log(preparedArray.length);
-	console.log(midPointLocation);
-	console.log(
-		`left array${leftArray} right array: ${rightArray} root node: ${midPointRoot}`
-	);
-	console.log(
-		`left child: ${leftChild} right child: ${rightChild} root node: ${midPointRoot}`
-	);
-	console.log(rootNode.leftChildren);
-	// insert build logic here
+		rootNode = new Node(midPointRoot, leftChild, rightChild);
+		// CONSOLE LOG STATEMENTs
+		console.log(preparedArray);
+		console.log(preparedArray.length);
+		console.log(midPointLocation);
+		console.log(
+			`left array${leftArray} right array: ${rightArray} root node: ${midPointRoot}`
+		);
+		console.log(
+			`left child: ${leftChild} right child: ${rightChild} root node: ${midPointRoot}`
+		);
+		console.log(rootNode.leftChildren);
+		rootNode = new Node(midPointRoot, leftChild, rightChild);
+	}
+
 	return rootNode;
 }
 
