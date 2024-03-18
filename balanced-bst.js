@@ -1,8 +1,8 @@
 class Node {
 	constructor(data, leftChildren, rightChildren) {
-		data = this.data;
-		leftChildren = this.leftChildren;
-		rightChildren = this.rightChildren;
+		this.data = data;
+		this.leftChildren = leftChildren;
+		this.rightChildren = rightChildren;
 	}
 }
 class Tree {
@@ -13,50 +13,50 @@ class Tree {
 
 // TODO Write a buildTree(array) function that takes an array of data (e.g., [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]) and turns it into a balanced binary tree full of Node objects appropriately placed (don’t forget to sort and remove duplicates!). The buildTree function should return the level-0 root node.
 function prepareArray(inputArray) {
-	inputArray.join();
-	inputArray.sort(function (a, b) {
-		return a - b;
-	});
 	let unique = [];
-	inputArray.forEach((element) => {
-		if (!unique.includes(element)) {
-			unique.push(element);
-		}
-	});
+
+	if (inputArray.length === 1) {
+		return [inputArray[0]];
+	} else {
+		inputArray.sort(function (a, b) {
+			return a - b;
+		});
+		inputArray.forEach((element) => {
+			if (!unique.includes(element)) {
+				unique.push(element);
+			}
+		});
+	}
 
 	return unique;
 }
 
-
-
 function buildTree(inputArray) {
 	let rootNode;
-	if (inputArray.length == 1) {
-		rootNode = new Node(inputArray[0], null, null);
+	let preparedArray = prepareArray(inputArray);
+
+	if (preparedArray.length === 1) {
+		rootNode = new Node(preparedArray[0], null, null);
 	} else {
-		let preparedArray = prepareArray(inputArray);
 		let midPointLocation = Math.trunc(preparedArray.length / 2);
 
 		let leftArray = preparedArray.slice(0, midPointLocation);
 		let rightArray = preparedArray.slice(midPointLocation + 1);
 		let midPointRoot = preparedArray[midPointLocation];
 
-		let leftChild = preparedArray[midPointLocation - 1];
-		let rightChild = preparedArray[midPointLocation + 1];
-
+		// TODO the recursive step doesn't terminate with even number arrays Fix that
+		// Recursive Step:
+		let leftChild = buildTree(leftArray);
+		let rightChild = buildTree(rightArray);
 		rootNode = new Node(midPointRoot, leftChild, rightChild);
-		// CONSOLE LOG STATEMENTs
+
+		// rootNode = new Node(midPointLocation, null, null);
+		// CONSOLE LOG STATEMENTS
 		console.log(preparedArray);
-		console.log(preparedArray.length);
 		console.log(midPointLocation);
 		console.log(
 			`left array${leftArray} right array: ${rightArray} root node: ${midPointRoot}`
 		);
-		console.log(
-			`left child: ${leftChild} right child: ${rightChild} root node: ${midPointRoot}`
-		);
-		console.log(rootNode.leftChildren);
-		rootNode = new Node(midPointRoot, leftChild, rightChild);
 	}
 
 	return rootNode;
@@ -102,10 +102,11 @@ function driverScript() {
 	// 8) Print out all elements in level, pre, post, and in order.
 	let sampleArray = [33, 42, 90, 33, 400, 86, 30, 45];
 	let builtTree = buildTree(sampleArray);
-	// const myTree = new Tree();
-
-	console.log("Driver script running");
 	console.log(builtTree);
+
+	// let sampleArray2 = [33, 42, 90, 33, 400, 86, 30, 45, 50];
+	// let builtTree2 = buildTree(sampleArray2);
+	// console.log(builtTree2);
 }
 
 driverScript();
