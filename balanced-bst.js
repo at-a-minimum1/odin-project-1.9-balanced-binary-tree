@@ -83,7 +83,6 @@ function isBalanced(inputTree) {
 		console.error("Tree is not balanced!");
 		return false;
 	} else {
-		console.log(`M: ${inputTree.data} L: ${leftValue} R: ${rightValue}`);
 		isBalanced(inputTree.leftChildren);
 		isBalanced(inputTree.rightChildren);
 	}
@@ -135,30 +134,29 @@ function rebalance(inputTree) {
 	if (inputTree === null) {
 		return;
 	}
+
 	let currentNode = inputTree;
 	const unpreparedArray = [];
-	const nodeStack = [];
-	while (currentNode != null) {
-		nodeStack.push(currentNode);
-		unpreparedArray.push(currentNode.data);
-		currentNode = currentNode.leftChildren;
-	}
-	let poppedNode = nodeStack.pop();
-	console.log(poppedNode.data);
+	const nodeStack = [inputTree];
+	// Traverse the tree's nodes
 	while (nodeStack.length > 0) {
-		if (poppedNode.rightChildren === null) {
-			poppedNode = nodeStack.pop();
-		} else {
-			unpreparedArray.push(poppedNode.rightChildren.data);
-			nodeStack.push(poppedNode.rightChildren);
-			poppedNode = nodeStack.pop();
+		if (currentNode.rightChildren != null) {
+			nodeStack.push(currentNode.rightChildren);
 		}
-		// poppedNode = nodeStack.pop();
+		if (currentNode.leftChildren != null) {
+			nodeStack.push(currentNode.leftChildren);
+		}
+		unpreparedArray.push(currentNode.data);
+		// console.log(currentNode.data + " rebalancing--------------------");
+		currentNode = nodeStack.pop();
 	}
 
-	const preparedArray = prepareArray(unpreparedArray);
+	// const preparedArray = prepareArray(unpreparedArray);
+	// console.log(unpreparedArray);
+	const balancedTree = buildTree(unpreparedArray);
 
-	return preparedArray;
+	// return balancedTree;
+	return unpreparedArray;
 }
 
 // TODO Write a driver script that does the following:
@@ -171,17 +169,17 @@ function driverScript() {
 	let sampleArray2 = [33, 42, 90, 30, 400, 86, 45, 50, 2];
 	let builtTree2 = buildTree(sampleArray2);
 	// console.log(builtTree2);
-	// let randoArray = randomizeArray();
+	let randoArray = randomizeArray();
 	// console.log(randoArray);
-	// let builtTree3 = buildTree(randoArray);
+	let builtTree3 = buildTree(randoArray);
 	// console.log(builtTree3);
 
 	// 2) Confirm that the tree is balanced by calling isBalanced.
 	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
 	let balancedTree = buildTree(balancedArray);
 	isBalanced(balancedTree);
-	console.log(balancedTree);
-	console.log(balancedArray);
+	// console.log(balancedTree);
+	// console.log(balancedArray);
 
 	// console.log(randoArray);
 	// console.log(builtTree3);
@@ -204,6 +202,11 @@ function driverScript() {
 	findItem(69, builtTree2);
 
 	console.log(rebalance(balancedTree));
+	console.log(balancedArray);
+	console.log(rebalance(builtTree2));
+	console.log(sampleArray2);
+	console.log(rebalance(builtTree3));
+	console.log(randoArray);
 }
 
 driverScript();
