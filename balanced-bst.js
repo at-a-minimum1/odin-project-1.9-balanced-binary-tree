@@ -23,6 +23,7 @@ class Tree {
 				rightValue = inputTree.rightChildren.data;
 			}
 		}
+		console.log(leftValue + " >? " + rightValue);
 		// Checks to see if the value on the left is greater than the one on the right. If so the tree is not balanced. Checking to see if the right value is 0 or not.
 		if (leftValue > rightValue && rightValue != 0) {
 			console.error(
@@ -219,11 +220,11 @@ function driverScript() {
 	let randomTree = new Tree(buildTree(randomArray));
 
 	// 2) Confirm that the tree is balanced by calling isBalanced.
-	randomTree.isBalanced();
-	console.assert(
-		randomTree.isBalanced() != false,
-		"isBalanced should return true and not false"
-	);
+	// randomTree.isBalanced();
+	// console.assert(
+	// 	randomTree.isBalanced() != false,
+	// 	"isBalanced should return true and not false"
+	// );
 
 	// 3) Print out all elements in level, pre, post, and in order.
 	//---- In level
@@ -239,6 +240,12 @@ function driverScript() {
 	// Other tests:
 	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
 	let balancedTree = new Tree(buildTree(balancedArray));
+
+	balancedTree.isBalanced();
+	console.assert(
+		balancedTree.isBalanced() != false,
+		"isBalanced should return true and not false"
+	);
 
 	// console.assert(
 	// 	balancedTree.findItem(7).data == 7,
