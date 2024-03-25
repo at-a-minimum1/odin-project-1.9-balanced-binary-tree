@@ -10,32 +10,34 @@ class Tree {
 		this.root = root;
 	}
 	isBalanced(inputTree = this.root) {
-		// let inputTree = this.root;
-		let leftValue = 0;
-		let rightValue = 0;
+		let leftValue = -1;
+		let rightValue = -2;
 
-		if (!inputTree || !inputTree.data) {
+		if (!inputTree) {
 			return;
 		}
 		if (inputTree.leftChildren != null) {
 			leftValue = inputTree.leftChildren.data;
 			if (inputTree.rightChildren != null) {
 				rightValue = inputTree.rightChildren.data;
+				console.log(leftValue + " ?> " + rightValue);
+				if (leftValue > rightValue) {
+					console.error(
+						`Tree is not balanced: ${leftValue} is greater than ${rightValue}`
+					);
+					return false;
+				}
+			}
+
+			if (inputTree.rightChildren == null) {
+				return this.isBalanced(inputTree.leftChildren);
+			} else {
+				return (
+					this.isBalanced(inputTree.rightChildren) &
+					this.isBalanced(inputTree.leftChildren)
+				);
 			}
 		}
-		console.log(leftValue + " >? " + rightValue);
-		// Checks to see if the value on the left is greater than the one on the right. If so the tree is not balanced. Checking to see if the right value is 0 or not.
-		if (leftValue > rightValue && rightValue != 0) {
-			console.error(
-				`Tree is not balanced: ${leftValue} is greater than ${rightValue}`
-			);
-			return false;
-		} else {
-			let rightTreeIsBalanced = this.isBalanced(inputTree.rightChildren);
-			let leftTreeIsBalanced = this.isBalanced(inputTree.leftChildren);
-			return rightTreeIsBalanced & leftTreeIsBalanced;
-		}
-
 		return true;
 	}
 	// TODO Write insert(value) and deleteItem(value) functions that insert/delete the given value. You’ll have to deal with several cases for delete, such as when a node has children or not. If you need additional resources, check out these two articles on inserting and deleting, or this video with several visual examples.
@@ -116,32 +118,6 @@ function buildTree(inputArray) {
 
 	return rootNode;
 }
-// function isBalanced(inputTree) {
-// 	let leftValue = 0;
-// 	let rightValue = 0;
-
-// 	if (!inputTree || !inputTree.data) {
-// 		return;
-// 	}
-// 	if (inputTree.leftChildren != null) {
-// 		leftValue = inputTree.leftChildren.data;
-// 		if (inputTree.rightChildren != null) {
-// 			rightValue = inputTree.rightChildren.data;
-// 		}
-// 	}
-// 	// Checks to see if the value on the left is greater than the one on the right. If so the tree is not balanced. Checking to see if the right value is 0 or not.
-// 	if (leftValue > rightValue && rightValue != 0) {
-// 		console.error(
-// 			`Tree is not balanced: ${leftValue} is greater than ${rightValue}`
-// 		);
-// 		return false;
-// 	} else {
-// 		isBalanced(inputTree.leftChildren);
-// 		isBalanced(inputTree.rightChildren);
-// 	}
-
-// 	return true;
-// }
 
 // TODO Write a levelOrder(callback) function that accepts an optional callback function as its parameter. levelOrder should traverse the tree in breadth-first level order and provide each node as an argument to the callback. As a result, the callback will perform an operation on each node following the order in which they are traversed. levelOrder may be implemented using either iteration or recursion (try implementing both!). The method should return an array of values if no callback is given as an argument. Tip: You will want to use an array acting as a queue to keep track of all the child nodes that you have yet to traverse and to add new ones to the list (as you saw in the video).
 function levelOrder(callback) {
@@ -220,11 +196,14 @@ function driverScript() {
 	let randomTree = new Tree(buildTree(randomArray));
 
 	// 2) Confirm that the tree is balanced by calling isBalanced.
-	// randomTree.isBalanced();
-	// console.assert(
-	// 	randomTree.isBalanced() != false,
-	// 	"isBalanced should return true and not false"
-	// );
+	let preparedRandom = prepareArray(randomArray);
+	console.log(preparedRandom);
+	console.log(randomTree);
+	console.log("This length is: " + preparedRandom.length);
+	console.assert(
+		randomTree.isBalanced() != false,
+		"isBalanced should return true and not false"
+	);
 
 	// 3) Print out all elements in level, pre, post, and in order.
 	//---- In level
@@ -238,14 +217,14 @@ function driverScript() {
 	// 8) Print out all elements in level, pre, post, and in order.
 
 	// Other tests:
-	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
-	let balancedTree = new Tree(buildTree(balancedArray));
+	// let balancedArray = [1, 2, 3, 4, 5, 6, 7];
+	// let balancedTree = new Tree(buildTree(balancedArray));
 
-	balancedTree.isBalanced();
-	console.assert(
-		balancedTree.isBalanced() != false,
-		"isBalanced should return true and not false"
-	);
+	// balancedTree.isBalanced();
+	// console.assert(
+	// 	balancedTree.isBalanced() != false,
+	// 	"isBalanced should return true and not false"
+	// );
 
 	// console.assert(
 	// 	balancedTree.findItem(7).data == 7,
