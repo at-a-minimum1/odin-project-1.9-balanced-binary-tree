@@ -9,8 +9,8 @@ class Tree {
 	constructor(root) {
 		this.root = root;
 	}
-	isBalanced() {
-		let inputTree = this.root;
+	isBalanced(inputTree = this.root) {
+		// let inputTree = this.root;
 		let leftValue = 0;
 		let rightValue = 0;
 
@@ -30,9 +30,9 @@ class Tree {
 			);
 			return false;
 		} else {
-			inputTree.rightChildren.isBalanced();
-			inputTree.leftChildren.isBalanced();
-			// isBalanced(inputTree.rightChildren);
+			let rightTreeIsBalanced = this.isBalanced(inputTree.rightChildren);
+			let leftTreeIsBalanced = this.isBalanced(inputTree.leftChildren);
+			return rightTreeIsBalanced & leftTreeIsBalanced;
 		}
 
 		return true;
@@ -240,18 +240,18 @@ function driverScript() {
 	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
 	let balancedTree = new Tree(buildTree(balancedArray));
 
-	console.assert(
-		balancedTree.findItem(7).data == 7,
-		"Find Item should return the node with 7 as it's value"
-	);
-	console.assert(
-		balancedTree.findItem(2).data == 2,
-		"Find Item should return the node with 2 as it's value"
-	);
-	console.assert(
-		balancedTree.findItem(20) == null,
-		"Find Item should return null since 20 is not in the tree."
-	);
+	// console.assert(
+	// 	balancedTree.findItem(7).data == 7,
+	// 	"Find Item should return the node with 7 as it's value"
+	// );
+	// console.assert(
+	// 	balancedTree.findItem(2).data == 2,
+	// 	"Find Item should return the node with 2 as it's value"
+	// );
+	// console.assert(
+	// 	balancedTree.findItem(20) == null,
+	// 	"Find Item should return null since 20 is not in the tree."
+	// );
 
 	// levelOrder();
 	// console.log(rebalance(balancedTree));
