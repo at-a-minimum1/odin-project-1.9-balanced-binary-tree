@@ -13,14 +13,13 @@ class Tree {
 		let leftValue = -1;
 		let rightValue = -2;
 
-		if (!inputTree) {
+		if (!inputTree || !inputTree.data) {
 			return;
 		}
 		if (inputTree.leftChildren != null) {
 			leftValue = inputTree.leftChildren.data;
 			if (inputTree.rightChildren != null) {
 				rightValue = inputTree.rightChildren.data;
-				console.log(leftValue + " ?> " + rightValue);
 				if (leftValue > rightValue) {
 					console.error(
 						`Tree is not balanced: ${leftValue} is greater than ${rightValue}`
@@ -45,8 +44,7 @@ class Tree {
 	deleteItem(value) {}
 
 	// TODO Write a find(value) function that returns the node with the given value.
-	findItem(value) {
-		let inputNode = this.root;
+	findItem(value, inputNode = this.root) {
 		if (inputNode === null) {
 			return;
 		}
@@ -54,12 +52,13 @@ class Tree {
 		if (value === inputNode.data) {
 			return inputNode;
 		}
-		let rightNode = inputNode.rightChildren;
-		let leftNode = inputNode.leftChildren;
+
+		let rightNode = inputNode.rightChildren || null;
+		let leftNode = inputNode.leftChildren || null;
 		if (inputNode.data < value) {
-			return rightNode.findItem(value);
+			return this.findItem(value, rightNode);
 		} else {
-			return leftNode.findItem(value);
+			return this.findItem(value, leftNode);
 		}
 	}
 }
@@ -196,56 +195,77 @@ function driverScript() {
 	let randomTree = new Tree(buildTree(randomArray));
 
 	// 2) Confirm that the tree is balanced by calling isBalanced.
-	let preparedRandom = prepareArray(randomArray);
-	console.log(preparedRandom);
-	console.log(randomTree);
-	console.log("This length is: " + preparedRandom.length);
 	console.assert(
 		randomTree.isBalanced() != false,
 		"isBalanced should return true and not false"
 	);
 
 	// 3) Print out all elements in level, pre, post, and in order.
-	//---- In level
-	//---- Pre order
-	//---- Post order
-	//---- In order
+	// console.log(randomArray);
+	// //---- In level
+	// randomTree.inOrder(printElement(randomTree));
+	// //---- Pre order
+	// randomTree.preOrder(printElement(randomTree));
+	// //---- Post order
+	// randomTree.postOrder(printElement(randomTree));
+	// //---- In order
+	// randomTree.inOrder(printElement(element));
+
 	// 4) Unbalance the tree by adding several numbers > 100.
+	const oneNode = new Node(1, null, null);
+	const hundredNode = new Node(100, null, null);
+	const fiftyNode = new Node(50, null, null);
+	// randomTree.insertItem(oneNode);
+	// randomTree.insertItem(hundredNode);
+	// randomTree.insertItem(fiftyNode);
+
 	// 5) Confirm that the tree is unbalanced by calling isBalanced.
-	// 6) Balance the tree by calling rebalance.
-	// 7) Confirm that the tree is balanced by calling isBalanced.
-	// 8) Print out all elements in level, pre, post, and in order.
-
-	// Other tests:
-	// let balancedArray = [1, 2, 3, 4, 5, 6, 7];
-	// let balancedTree = new Tree(buildTree(balancedArray));
-
-	// balancedTree.isBalanced();
 	// console.assert(
-	// 	balancedTree.isBalanced() != false,
+	// 	randomTree.isBalanced() == false,
+	// 	"is Balanced should return false and not true"
+	// );
+
+	// 6) Balance the tree by calling rebalance.
+	// randomTree.rebalance();
+
+	// 7) Confirm that the tree is balanced by calling isBalanced.
+	// console.assert(
+	// 	randomTree.isBalanced() == true,
 	// 	"isBalanced should return true and not false"
 	// );
 
-	// console.assert(
-	// 	balancedTree.findItem(7).data == 7,
-	// 	"Find Item should return the node with 7 as it's value"
-	// );
-	// console.assert(
-	// 	balancedTree.findItem(2).data == 2,
-	// 	"Find Item should return the node with 2 as it's value"
-	// );
-	// console.assert(
-	// 	balancedTree.findItem(20) == null,
-	// 	"Find Item should return null since 20 is not in the tree."
-	// );
-
-	// levelOrder();
-	// console.log(rebalance(balancedTree));
-	// console.log(balancedArray);
-	// console.log(rebalance(builtTree2));
-	// console.log(sampleArray2);
-	// console.log(rebalance(builtTree3));
+	// 8) Print out all elements in level, pre, post, and in order.
 	// console.log(randomArray);
+	// //---- In level
+	// randomTree.inOrder(print(randomTree));
+	// //---- Pre order
+	// randomTree.preOrder(print(randomTree));
+	// //---- Post order
+	// randomTree.postOrder(print(randomTree));
+	// //---- In order
+	// randomTree.inOrder(print(element));
+
+	// Other tests:
+	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
+	let balancedTree = new Tree(buildTree(balancedArray));
+
+	console.assert(
+		balancedTree.isBalanced() != false,
+		"isBalanced should return true and not false"
+	);
+
+	console.assert(
+		balancedTree.findItem(7).data == 7,
+		"Find Item should return the node with 7 as it's value"
+	);
+	console.assert(
+		balancedTree.findItem(2).data == 2,
+		"Find Item should return the node with 2 as it's value"
+	);
+	console.assert(
+		balancedTree.findItem(20) == null,
+		"Find Item should return null since 20 is not in the tree."
+	);
 }
 
 driverScript();
