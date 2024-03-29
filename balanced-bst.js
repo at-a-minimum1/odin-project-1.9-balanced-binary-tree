@@ -61,6 +61,73 @@ class Tree {
 			return this.findItem(value, leftNode);
 		}
 	}
+	// TODO Write inOrder(callback), preOrder(callback), and postOrder(callback) functions that also accept an optional callback as a parameter. Each of these functions should traverse the tree in their respective depth-first order and yield each node to the provided callback. The functions should return an array of values if no callback is given as an argument.
+	inOrder(callback, node = this.root) {
+		if (node) {
+			if (typeof callback === "function") {
+				this.inOrder(callback, node.leftChildren);
+				callback(node);
+				this.inOrder(callback, node.rightChildren);
+			} else {
+				console.error("Callback is not a function");
+			}
+		}
+	}
+
+	preOrder(callback, node = this.root) {
+		if (node) {
+			if (typeof callback === "function") {
+				callback(node);
+				this.preOrder(callback, node.leftChildren);
+				this.preOrder(callback, node.rightChildren);
+			} else {
+				console.error("Callback is not a function");
+			}
+		}
+	}
+
+	postOrder(callback, node = this.root) {
+		if (node) {
+			if (typeof callback === "function") {
+				this.postOrder(callback, node.leftChildren);
+				this.postOrder(callback, node.rightChildren);
+				callback(node);
+			} else {
+				console.error("Callback is not a function");
+			}
+		}
+	}
+
+	height(node) {}
+
+	depth(node) {}
+
+	// TODO Write a rebalance function that rebalances an unbalanced tree. Tip: You’ll want to use a traversal method to provide a new array to the buildTree function.
+	rebalance(inputTree = this.root) {
+		// Error checking
+		if (inputTree === null) {
+			return;
+		}
+
+		let currentNode = inputTree;
+		const unpreparedArray = [];
+		const nodeStack = [inputTree];
+		// Traverse the tree's nodes
+		while (nodeStack.length > 0) {
+			if (currentNode.rightChildren != null) {
+				nodeStack.push(currentNode.rightChildren);
+			}
+			if (currentNode.leftChildren != null) {
+				nodeStack.push(currentNode.leftChildren);
+			}
+			unpreparedArray.push(currentNode.data);
+			currentNode = nodeStack.pop();
+		}
+
+		const balancedTree = buildTree(unpreparedArray);
+
+		return balancedTree;
+	}
 }
 
 // TODO Write a buildTree(array) function that takes an array of data (e.g., [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]) and turns it into a balanced binary tree full of Node objects appropriately placed (don’t forget to sort and remove duplicates!). The buildTree function should return the level-0 root node.
@@ -134,7 +201,6 @@ function levelOrder(callback) {
 		// currentNode = nodeStack.shift();
 
 		if (callback) {
-			//
 			callback(currentNode);
 			console.log("Callback was provided");
 		} else {
@@ -146,46 +212,20 @@ function levelOrder(callback) {
 	}
 }
 
-// TODO Write inOrder(callback), preOrder(callback), and postOrder(callback) functions that also accept an optional callback as a parameter. Each of these functions should traverse the tree in their respective depth-first order and yield each node to the provided callback. The functions should return an array of values if no callback is given as an argument.
-function inOrder(callback) {}
-
-function preOrder(callback) {}
-
-function postOrder(callback) {}
-
-function height(node) {}
-
-function depth(node) {}
-
-// TODO Write a rebalance function that rebalances an unbalanced tree. Tip: You’ll want to use a traversal method to provide a new array to the buildTree function.
-function rebalance(inputTree) {
-	// Error checking
-	if (inputTree === null) {
-		return;
-	}
-
-	let currentNode = inputTree;
-	const unpreparedArray = [];
-	const nodeStack = [inputTree];
-	// Traverse the tree's nodes
-	while (nodeStack.length > 0) {
-		if (currentNode.rightChildren != null) {
-			nodeStack.push(currentNode.rightChildren);
-		}
-		if (currentNode.leftChildren != null) {
-			nodeStack.push(currentNode.leftChildren);
-		}
-		unpreparedArray.push(currentNode.data);
-		currentNode = nodeStack.pop();
-	}
-
-	const balancedTree = buildTree(unpreparedArray);
-
-	return balancedTree;
-}
-
 function printElement(element) {
-	console.log(element);
+	let message = `Current Node Value: `;
+	if (element) {
+		message += `${element.data}`;
+		if (element.rightChildren) {
+			message += ` Left Node Value: ${element.leftChildren.data}`;
+		}
+		if (element.rightChildren) {
+			message += ` Right Node Value: ${element.rightChildren.data}`;
+		}
+	} else {
+		message += `Null`;
+	}
+	console.log(message);
 }
 
 // TODO Write a driver script that does the following:
@@ -235,15 +275,18 @@ function driverScript() {
 	// );
 
 	// 8) Print out all elements in level, pre, post, and in order.
-	// console.log(randomArray);
-	// //---- In level
-	// randomTree.inOrder(print(randomTree));
-	// //---- Pre order
-	// randomTree.preOrder(print(randomTree));
-	// //---- Post order
-	// randomTree.postOrder(print(randomTree));
-	// //---- In order
-	// randomTree.inOrder(print(element));
+	console.log(randomArray);
+	//---- In level
+	// randomTree.inOrder(printElement(randomTree));
+	//---- Pre order
+	console.log("-----------------Pre-Order:-----------------");
+	randomTree.preOrder(printElement);
+	//---- Post order
+	console.log("-----------------Post-Order-----------------");
+	randomTree.postOrder(printElement);
+	//---- In order
+	console.log("-----------------In Order-----------------");
+	randomTree.inOrder(printElement);
 
 	// Other tests:
 	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
