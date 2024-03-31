@@ -40,7 +40,35 @@ class Tree {
 		return true;
 	}
 	// TODO Write insert(value) and deleteItem(value) functions that insert/delete the given value. You’ll have to deal with several cases for delete, such as when a node has children or not. If you need additional resources, check out these two articles on inserting and deleting, or this video with several visual examples.
-	insertItem(value) {}
+	insertItem(value) {
+		if (value == null || value == undefined) {
+			return;
+		}
+		const insertNode = new Node(value, null, null);
+		if (!this.root) {
+			this.root = insertNode;
+			return;
+		}
+		let currentNode = this.root;
+
+		while (currentNode) {
+			if (currentNode.data < value) {
+				if (!currentNode.rightChildren) {
+					currentNode.rightChildren = insertNode;
+					break;
+				} else {
+					currentNode = currentNode.rightChildren;
+				}
+			} else {
+				if (!currentNode.leftChildren) {
+					currentNode.leftChildren = insertNode;
+					break;
+				} else {
+					currentNode = currentNode.leftChildren;
+				}
+			}
+		}
+	}
 	deleteItem(value) {}
 
 	// TODO Write a find(value) function that returns the node with the given value.
@@ -63,6 +91,10 @@ class Tree {
 	}
 	// TODO Write inOrder(callback), preOrder(callback), and postOrder(callback) functions that also accept an optional callback as a parameter. Each of these functions should traverse the tree in their respective depth-first order and yield each node to the provided callback. The functions should return an array of values if no callback is given as an argument.
 	inOrder(callback, node = this.root) {
+		let arrayOfValues = [];
+		if (!callback) {
+			return arrayOfValues;
+		}
 		if (node) {
 			if (typeof callback === "function") {
 				this.inOrder(callback, node.leftChildren);
@@ -75,6 +107,10 @@ class Tree {
 	}
 
 	preOrder(callback, node = this.root) {
+		let arrayOfValues = [];
+		if (!callback) {
+			return arrayOfValues;
+		}
 		if (node) {
 			if (typeof callback === "function") {
 				callback(node);
@@ -87,6 +123,10 @@ class Tree {
 	}
 
 	postOrder(callback, node = this.root) {
+		let arrayOfValues = [];
+		if (!callback) {
+			return arrayOfValues;
+		}
 		if (node) {
 			if (typeof callback === "function") {
 				this.postOrder(callback, node.leftChildren);
@@ -252,27 +292,24 @@ function driverScript() {
 	// randomTree.inOrder(printElement(element));
 
 	// 4) Unbalance the tree by adding several numbers > 100.
-	const oneNode = new Node(1, null, null);
-	const hundredNode = new Node(100, null, null);
-	const fiftyNode = new Node(50, null, null);
-	// randomTree.insertItem(oneNode);
-	// randomTree.insertItem(hundredNode);
-	// randomTree.insertItem(fiftyNode);
+	randomTree.insertItem(1);
+	randomTree.insertItem(100);
+	randomTree.insertItem(50);
 
 	// 5) Confirm that the tree is unbalanced by calling isBalanced.
-	// console.assert(
-	// 	randomTree.isBalanced() == false,
-	// 	"is Balanced should return false and not true"
-	// );
+	console.assert(
+		randomTree.isBalanced() == false,
+		"is Balanced should return false and not true"
+	);
 
 	// 6) Balance the tree by calling rebalance.
-	// randomTree.rebalance();
+	randomTree.rebalance();
 
 	// 7) Confirm that the tree is balanced by calling isBalanced.
-	// console.assert(
-	// 	randomTree.isBalanced() == true,
-	// 	"isBalanced should return true and not false"
-	// );
+	console.assert(
+		randomTree.isBalanced() == true,
+		"isBalanced should return true and not false"
+	);
 
 	// 8) Print out all elements in level, pre, post, and in order.
 	console.log(randomArray);
@@ -287,6 +324,7 @@ function driverScript() {
 	//---- In order
 	console.log("-----------------In Order-----------------");
 	randomTree.inOrder(printElement);
+	console.log("----------------------------------");
 
 	// Other tests:
 	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
@@ -309,6 +347,14 @@ function driverScript() {
 		balancedTree.findItem(20) == null,
 		"Find Item should return null since 20 is not in the tree."
 	);
+
+	let testArray = [1, 2, 3, 4, 5, 6];
+	let testTree = new Tree(buildTree(testArray));
+	testTree.insertItem(90);
+	testTree.insertItem(42);
+	testTree.insertItem(41);
+	testTree.insertItem(9);
+	console.log(testTree.inOrder(printElement));
 }
 
 driverScript();
