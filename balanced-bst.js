@@ -9,6 +9,7 @@ class Tree {
 	constructor(root) {
 		this.root = root;
 	}
+	// TODO Write an isBalanced function that checks if the tree is balanced. A balanced tree is one where the difference between heights of the left subtree and the right subtree of every node is not more than 1.
 	isBalanced(inputTree = this.root) {
 		let leftValue = -1;
 		let rightValue = -2;
@@ -44,6 +45,9 @@ class Tree {
 		if (value == null || value == undefined) {
 			return;
 		}
+		if (this.findItem(value)) {
+			console.error("Value is already in the tree.");
+		}
 		const insertNode = new Node(value, null, null);
 		if (!this.root) {
 			this.root = insertNode;
@@ -71,7 +75,6 @@ class Tree {
 	}
 	deleteItem(value) {}
 
-	// TODO Write a find(value) function that returns the node with the given value.
 	findItem(value, inputNode = this.root) {
 		if (inputNode === null) {
 			return;
@@ -137,10 +140,34 @@ class Tree {
 			}
 		}
 	}
-
-	height(node) {}
-
-	depth(node) {}
+	// TODO Write a height(node) function that returns the given node’s height. Height is defined as the number of edges in the longest path from a given node to a leaf node.
+	height(node) {
+		if (!node) {
+			return;
+		}
+		let rightHeight = 0;
+		let leftHeight = 0;
+		while (node) {}
+	}
+	// TODO Write a depth(node) function that returns the given node’s depth. Depth is defined as the number of edges in the path from a given node to the tree’s root node.
+	depth(node) {
+		let currentNode = this.root;
+		let depthNumber = 0;
+		if (!node) {
+			return;
+		}
+		while (currentNode) {
+			if (node === currentNode) {
+				return depthNumber;
+			}
+			if (currentNode.data > node.data) {
+				currentNode = currentNode.leftChildren;
+			} else {
+				currentNode = currentNode.rightChildren;
+			}
+			depthNumber++;
+		}
+	}
 
 	// TODO Write a rebalance function that rebalances an unbalanced tree. Tip: You’ll want to use a traversal method to provide a new array to the buildTree function.
 	rebalance(inputTree = this.root) {
@@ -170,7 +197,6 @@ class Tree {
 	}
 }
 
-// TODO Write a buildTree(array) function that takes an array of data (e.g., [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]) and turns it into a balanced binary tree full of Node objects appropriately placed (don’t forget to sort and remove duplicates!). The buildTree function should return the level-0 root node.
 function randomizeArray() {
 	const arraySize = Math.trunc(Math.random() * (20 - 1));
 	const randomArray = new Array();
@@ -238,8 +264,6 @@ function levelOrder(callback) {
 		if (currentNode.rightChildren) {
 			nodeStack.push(currentNode.rightChildren);
 		}
-		// currentNode = nodeStack.shift();
-
 		if (callback) {
 			callback(currentNode);
 			console.log("Callback was provided");
@@ -256,7 +280,7 @@ function printElement(element) {
 	let message = `Current Node Value: `;
 	if (element) {
 		message += `${element.data}`;
-		if (element.rightChildren) {
+		if (element.leftChildren) {
 			message += ` Left Node Value: ${element.leftChildren.data}`;
 		}
 		if (element.rightChildren) {
@@ -348,13 +372,22 @@ function driverScript() {
 		"Find Item should return null since 20 is not in the tree."
 	);
 
-	let testArray = [1, 2, 3, 4, 5, 6];
+	let testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 	let testTree = new Tree(buildTree(testArray));
 	testTree.insertItem(90);
 	testTree.insertItem(42);
 	testTree.insertItem(41);
 	testTree.insertItem(9);
 	console.log(testTree.inOrder(printElement));
+	console.log(testTree.depth(testTree.findItem(6)));
+	console.log(testTree.depth(testTree.findItem(3)));
+	console.log(testTree.depth(testTree.findItem(2)));
+	console.log(testTree.depth(testTree.findItem(1)));
+	console.log(testTree.depth(testTree.findItem(4)));
+	console.log(testTree.depth(testTree.findItem(42)));
+	console.log(testTree.depth(testTree.findItem(41)));
+
+	// console.log(testTree.depth(testTree.findItem(90)));
 }
 
 driverScript();
