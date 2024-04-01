@@ -57,3 +57,34 @@
 // 					currentNode = insertNode;
 // 				}
 // 			}
+
+	// isBalanced(inputTree = this.root) {
+	// 	let leftValue = -1;
+	// 	let rightValue = -2;
+
+	// 	if (!inputTree || !inputTree.data) {
+	// 		return;
+	// 	}
+	// 	if (inputTree.leftChildren != null) {
+	// 		leftValue = inputTree.leftChildren.data;
+	// 		if (inputTree.rightChildren != null) {
+	// 			rightValue = inputTree.rightChildren.data;
+	// 			if (leftValue > rightValue) {
+	// 				console.error(
+	// 					`Tree is not balanced: ${leftValue} is greater than ${rightValue}`
+	// 				);
+	// 				return false;
+	// 			}
+	// 		}
+
+	// 		if (inputTree.rightChildren == null) {
+	// 			return this.isBalanced(inputTree.leftChildren);
+	// 		} else {
+	// 			return (
+	// 				this.isBalanced(inputTree.rightChildren) &
+	// 				this.isBalanced(inputTree.leftChildren)
+	// 			);
+	// 		}
+	// 	}
+	// 	return true;
+	// }

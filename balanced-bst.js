@@ -141,21 +141,29 @@ class Tree {
 		}
 	}
 	// TODO Write a height(node) function that returns the given node’s height. Height is defined as the number of edges in the longest path from a given node to a leaf node.
-	height(node) {
+	height(node, nodeHeight = 0) {
 		if (!node) {
-			return;
+			return -1;
 		}
-		let rightHeight = 0;
-		let leftHeight = 0;
-		while (node) {}
+		// console.log(node);
+		console.log(`height: ${nodeHeight}`);
+
+		if (!node.rightChildren && !node.leftChildren) {
+			return nodeHeight;
+		}
+
+		const leftHeight = this.height(node.leftChildren, nodeHeight + 1);
+		const rightHeight = this.height(node.rightChildren, nodeHeight + 1);
+
+		return Math.max(leftHeight, rightHeight);
 	}
 	// TODO Write a depth(node) function that returns the given node’s depth. Depth is defined as the number of edges in the path from a given node to the tree’s root node.
 	depth(node) {
+		if (!node) {
+			return -1;
+		}
 		let currentNode = this.root;
 		let depthNumber = 0;
-		if (!node) {
-			return;
-		}
 		while (currentNode) {
 			if (node === currentNode) {
 				return depthNumber;
@@ -167,6 +175,7 @@ class Tree {
 			}
 			depthNumber++;
 		}
+		return -1;
 	}
 
 	// TODO Write a rebalance function that rebalances an unbalanced tree. Tip: You’ll want to use a traversal method to provide a new array to the buildTree function.
@@ -305,15 +314,17 @@ function driverScript() {
 	);
 
 	// 3) Print out all elements in level, pre, post, and in order.
-	// console.log(randomArray);
-	// //---- In level
-	// randomTree.inOrder(printElement(randomTree));
-	// //---- Pre order
-	// randomTree.preOrder(printElement(randomTree));
-	// //---- Post order
-	// randomTree.postOrder(printElement(randomTree));
-	// //---- In order
-	// randomTree.inOrder(printElement(element));
+	console.log(randomArray);
+	//---- Pre order
+	console.log("-----------------Pre-Order:-----------------");
+	randomTree.preOrder(printElement);
+	//---- Post order
+	console.log("-----------------Post-Order-----------------");
+	randomTree.postOrder(printElement);
+	//---- In order
+	console.log("-----------------In Order-----------------");
+	randomTree.inOrder(printElement);
+	console.log("-----------------End of log-----------------");
 
 	// 4) Unbalance the tree by adding several numbers > 100.
 	randomTree.insertItem(1);
@@ -337,8 +348,6 @@ function driverScript() {
 
 	// 8) Print out all elements in level, pre, post, and in order.
 	console.log(randomArray);
-	//---- In level
-	// randomTree.inOrder(printElement(randomTree));
 	//---- Pre order
 	console.log("-----------------Pre-Order:-----------------");
 	randomTree.preOrder(printElement);
@@ -348,7 +357,7 @@ function driverScript() {
 	//---- In order
 	console.log("-----------------In Order-----------------");
 	randomTree.inOrder(printElement);
-	console.log("----------------------------------");
+	console.log("-----------------End of log-----------------");
 
 	// Other tests:
 	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
@@ -378,15 +387,29 @@ function driverScript() {
 	testTree.insertItem(42);
 	testTree.insertItem(41);
 	testTree.insertItem(9);
-	console.log(testTree.inOrder(printElement));
-	console.log(testTree.depth(testTree.findItem(6)));
-	console.log(testTree.depth(testTree.findItem(3)));
-	console.log(testTree.depth(testTree.findItem(2)));
-	console.log(testTree.depth(testTree.findItem(1)));
-	console.log(testTree.depth(testTree.findItem(4)));
-	console.log(testTree.depth(testTree.findItem(42)));
-	console.log(testTree.depth(testTree.findItem(41)));
-
+	// console.log(testTree.inOrder(printElement));
+	// console.log(testTree.depth(testTree.findItem(6)));
+	// console.log(testTree.depth(testTree.findItem(3)));
+	// console.log(testTree.depth(testTree.findItem(2)));
+	// console.log(testTree.depth(testTree.findItem(1)));
+	// console.log(testTree.depth(testTree.findItem(4)));
+	// console.log(testTree.depth(testTree.findItem(42)));
+	// console.log(testTree.depth(testTree.findItem(41)));
+	// console.log("-----------------------");
+	// console.log(testTree.height(testTree.findItem(6).rightChildren));
+	// console.log(testTree.height(testTree.findItem(6).leftChildren));
+	console.log("-----------------------");
+	console.log(balancedTree);
+	console.log(balancedTree.inOrder(printElement));
+	console.log(balancedTree.height(balancedTree.root.rightChildren));
+	console.log(balancedTree.height(balancedTree.root.leftChildren));
+	let heightArray = [1, 2, 3, 4, 5];
+	let heightTree = new Tree(buildTree(heightArray));
+	console.log(heightTree);
+	console.log(heightTree.height(heightTree.root.leftChildren));
+	console.log(heightTree.height(heightTree.root.rightChildren));
+	// console.log(testTree.height(testTree.findItem(41)));
+	// console.log(testTree.height(testTree.findItem(3)));
 	// console.log(testTree.depth(testTree.findItem(90)));
 }
 
