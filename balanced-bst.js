@@ -4,41 +4,34 @@ class Node {
 		this.leftChildren = leftChildren;
 		this.rightChildren = rightChildren;
 	}
+	setNode(data, leftChildren, rightChildren) {
+		this.data = data;
+		this.leftChildren = leftChildren;
+		this.rightChildren = rightChildren;
+	}
 }
 class Tree {
 	constructor(root) {
 		this.root = root;
 	}
-	// TODO Write an isBalanced function that checks if the tree is balanced. A balanced tree is one where the difference between heights of the left subtree and the right subtree of every node is not more than 1.
-	isBalanced(inputTree = this.root) {
-		let leftValue = -1;
-		let rightValue = -2;
-
-		if (!inputTree || !inputTree.data) {
+	// Write an isBalanced function that checks if the tree is balanced. A balanced tree is one where the difference between heights of the left subtree and the right subtree of every node is not more than 1.
+	isBalanced() {
+		if (!this.root) {
 			return;
 		}
-		if (inputTree.leftChildren != null) {
-			leftValue = inputTree.leftChildren.data;
-			if (inputTree.rightChildren != null) {
-				rightValue = inputTree.rightChildren.data;
-				if (leftValue > rightValue) {
-					console.error(
-						`Tree is not balanced: ${leftValue} is greater than ${rightValue}`
-					);
-					return false;
-				}
-			}
 
-			if (inputTree.rightChildren == null) {
-				return this.isBalanced(inputTree.leftChildren);
-			} else {
-				return (
-					this.isBalanced(inputTree.rightChildren) &
-					this.isBalanced(inputTree.leftChildren)
-				);
-			}
+		let leftHeight = 0;
+		let rightHeight = 0;
+		if (this.root.leftChildren) {
+			leftHeight = this.height(this.root.leftChildren);
 		}
-		return true;
+		if (this.root.rightChildren) {
+			rightHeight = this.height(this.root.rightChildren);
+		}
+
+		let difference = Math.abs(leftHeight - rightHeight);
+
+		return difference <= 1;
 	}
 	// TODO Write insert(value) and deleteItem(value) functions that insert/delete the given value. You’ll have to deal with several cases for delete, such as when a node has children or not. If you need additional resources, check out these two articles on inserting and deleting, or this video with several visual examples.
 	insertItem(value) {
@@ -73,7 +66,101 @@ class Tree {
 			}
 		}
 	}
-	deleteItem(value) {}
+	deleteItem(deleteNode) {
+		if (deleteNode == null || deleteNode == undefined) {
+			return;
+		}
+		// TODO handle cases where the node to be deleted is the root node
+		if(deleteNode === this.root){
+			console.log("the node being deleted is the root");
+			return;
+		}
+
+
+		if (!this.findItem(deleteNode)) {
+			console.error("Item doesn't exist in tree.");
+			return;
+		}
+
+		let rightNode = null;
+		let leftNode = null;
+		let parentNode = this.findParent(deleteNode);
+		if (!parentNode) {
+			console.error("ERROR: Parent Node doesn't exist");
+			return;
+		}
+
+		deleteNode = this.findItem(deleteNode);
+		if (deleteNode.leftChildren) {
+			leftNode = deleteNode.leftChildren;
+		}
+		if (deleteNode.rightChildren) {
+			rightNode = deleteNode.rightChildren;
+		}
+
+		// 	Node with no children (Leaf node): Simply remove the node from the tree.
+		if (rightNode == null && leftNode == null) {
+			console.log(
+				"BOTH CHILD IS NULL DND: " +
+					deleteNode.data +
+					" PND: " +
+					parentNode.data
+			);
+			if (deleteNode.data > parentNode.data) {
+				parentNode.setNode(parentNode.data, parentNode.leftChildren, null);
+				console.log(parentNode);
+				deleteNode = null;
+			} else {
+				parentNode.setNode(parentNode.data, null, parentNode.rightChildren);
+				console.log(parentNode);
+			}
+		}
+
+		// Node with one child: Remove the node and replace it with its child. This way, the child takes the position of the deleted node, preserving the binary search tree property.
+		if ((rightNode && !leftNode) || (leftNode && !rightNode)) {
+			console.log("ONE CHILD IS NULL " + deleteNode.data);
+			if (!leftNode) {
+				console.log("Left Node doesn't exist.");
+				parentNode.setNode(
+					parentNode.data,
+					parentNode.leftChildren,
+					deleteNode.rightChildren
+				);
+				console.log(parentNode);
+				deleteNode = null;
+			} else {
+				parentNode.setNode(
+					parentNode.data,
+					deleteNode.leftChildren,
+					parentNode.rightChildren
+				);
+				console.log(parentNode);
+				deleteNode = null;
+			}
+		}
+
+		// Node with two children: Find the in-order successor of the node (the smallest node in its right subtree) or the in-order predecessor (the largest node in its left subtree), and
+		// replace the value of the node to be deleted with the found in-order successor or predecessor.
+		// Then, delete the in-order successor (or predecessor) node from the tree, which will now be a leaf node or a node with one child. This way, the binary search tree property is preserved.
+		if (rightNode && leftNode) {
+			parentNode = this.findParent(deleteNode.data);
+			console.log(
+				"BOTH CHILD IS NOT NULL DeleteNodeData:" +
+					deleteNode.data +
+					" PND: " +
+					parentNode.data
+			);
+
+			deleteNode.setNode(
+				deleteNode.rightChildren.data,
+				deleteNode.leftChildren,
+				null
+			);
+			console.log(
+				`Delete Node: ${deleteNode.data} DN Children: ${deleteNode.rightChildren} ${deleteNode.leftChildren.data}`
+			);
+		}
+	}
 
 	findItem(value, inputNode = this.root) {
 		if (inputNode === null) {
@@ -92,7 +179,33 @@ class Tree {
 			return this.findItem(value, leftNode);
 		}
 	}
-	// TODO Write inOrder(callback), preOrder(callback), and postOrder(callback) functions that also accept an optional callback as a parameter. Each of these functions should traverse the tree in their respective depth-first order and yield each node to the provided callback. The functions should return an array of values if no callback is given as an argument.
+	findParent(value, inputNode = this.root) {
+		if (!inputNode) {
+			console.log(inputNode);
+			return;
+		}
+		let rightNode = null;
+		let leftNode = null;
+		if (inputNode.rightChildren) {
+			rightNode = inputNode.rightChildren;
+			if (rightNode.data === value) {
+				return inputNode;
+			}
+		}
+		if (inputNode.leftChildren) {
+			leftNode = inputNode.leftChildren;
+			if (leftNode.data === value) {
+				return inputNode;
+			}
+		}
+
+		if (inputNode.data < value) {
+			return this.findParent(value, rightNode);
+		} else {
+			return this.findParent(value, leftNode);
+		}
+	}
+	// Write inOrder(callback), preOrder(callback), and postOrder(callback) functions that also accept an optional callback as a parameter. Each of these functions should traverse the tree in their respective depth-first order and yield each node to the provided callback. The functions should return an array of values if no callback is given as an argument.
 	inOrder(callback, node = this.root) {
 		let arrayOfValues = [];
 		if (!callback) {
@@ -140,13 +253,11 @@ class Tree {
 			}
 		}
 	}
-	// TODO Write a height(node) function that returns the given node’s height. Height is defined as the number of edges in the longest path from a given node to a leaf node.
+	// Write a height(node) function that returns the given node’s height. Height is defined as the number of edges in the longest path from a given node to a leaf node.
 	height(node, nodeHeight = 0) {
 		if (!node) {
 			return -1;
 		}
-		// console.log(node);
-		console.log(`height: ${nodeHeight}`);
 
 		if (!node.rightChildren && !node.leftChildren) {
 			return nodeHeight;
@@ -157,7 +268,7 @@ class Tree {
 
 		return Math.max(leftHeight, rightHeight);
 	}
-	// TODO Write a depth(node) function that returns the given node’s depth. Depth is defined as the number of edges in the path from a given node to the tree’s root node.
+	// Write a depth(node) function that returns the given node’s depth. Depth is defined as the number of edges in the path from a given node to the tree’s root node.
 	depth(node) {
 		if (!node) {
 			return -1;
@@ -178,16 +289,16 @@ class Tree {
 		return -1;
 	}
 
-	// TODO Write a rebalance function that rebalances an unbalanced tree. Tip: You’ll want to use a traversal method to provide a new array to the buildTree function.
+	// Write a rebalance function that rebalances an unbalanced tree. Tip: You’ll want to use a traversal method to provide a new array to the buildTree function.
 	rebalance(inputTree = this.root) {
 		// Error checking
 		if (inputTree === null) {
 			return;
 		}
 
-		let currentNode = inputTree;
+		let currentNode = this.root;
 		const unpreparedArray = [];
-		const nodeStack = [inputTree];
+		const nodeStack = [this.root];
 		// Traverse the tree's nodes
 		while (nodeStack.length > 0) {
 			if (currentNode.rightChildren != null) {
@@ -201,13 +312,14 @@ class Tree {
 		}
 
 		const balancedTree = buildTree(unpreparedArray);
+		this.root = balancedTree;
 
 		return balancedTree;
 	}
 }
 
 function randomizeArray() {
-	const arraySize = Math.trunc(Math.random() * (20 - 1));
+	const arraySize = Math.trunc(Math.random() * (20 - 2));
 	const randomArray = new Array();
 	for (let i = 0; i < arraySize; i++) {
 		randomArray.push(Math.trunc(Math.random() * (100 - 1)));
@@ -260,7 +372,7 @@ function buildTree(inputArray) {
 	return rootNode;
 }
 
-// TODO Write a levelOrder(callback) function that accepts an optional callback function as its parameter. levelOrder should traverse the tree in breadth-first level order and provide each node as an argument to the callback. As a result, the callback will perform an operation on each node following the order in which they are traversed. levelOrder may be implemented using either iteration or recursion (try implementing both!). The method should return an array of values if no callback is given as an argument. Tip: You will want to use an array acting as a queue to keep track of all the child nodes that you have yet to traverse and to add new ones to the list (as you saw in the video).
+// Write a levelOrder(callback) function that accepts an optional callback function as its parameter. levelOrder should traverse the tree in breadth-first level order and provide each node as an argument to the callback. As a result, the callback will perform an operation on each node following the order in which they are traversed. levelOrder may be implemented using either iteration or recursion (try implementing both!). The method should return an array of values if no callback is given as an argument. Tip: You will want to use an array acting as a queue to keep track of all the child nodes that you have yet to traverse and to add new ones to the list (as you saw in the video).
 function levelOrder(callback) {
 	const nodeStack = [this.Tree];
 	const resultArray = [this.Tree];
@@ -295,13 +407,14 @@ function printElement(element) {
 		if (element.rightChildren) {
 			message += ` Right Node Value: ${element.rightChildren.data}`;
 		}
-	} else {
-		message += `Null`;
+		console.log(message);
 	}
-	console.log(message);
+	// else {
+	// 	return;
+	// }
 }
 
-// TODO Write a driver script that does the following:
+// Write a driver script that does the following:
 function driverScript() {
 	// 1) Create a binary search tree from an array of random numbers < 100. You can create a function that returns an array of random numbers every time you call it if you wish.
 	let randomArray = randomizeArray();
@@ -314,29 +427,31 @@ function driverScript() {
 	);
 
 	// 3) Print out all elements in level, pre, post, and in order.
-	console.log(randomArray);
-	//---- Pre order
-	console.log("-----------------Pre-Order:-----------------");
-	randomTree.preOrder(printElement);
-	//---- Post order
-	console.log("-----------------Post-Order-----------------");
-	randomTree.postOrder(printElement);
-	//---- In order
-	console.log("-----------------In Order-----------------");
-	randomTree.inOrder(printElement);
-	console.log("-----------------End of log-----------------");
+	// console.log(randomArray);
+	// //---- Pre order
+	// console.log("-----------------Pre-Order:-----------------");
+	// randomTree.preOrder(printElement);
+	// //---- Post order
+	// console.log("-----------------Post-Order-----------------");
+	// randomTree.postOrder(printElement);
+	// //---- In order
+	// console.log("-----------------In Order-----------------");
+	// randomTree.inOrder(printElement);
+	// console.log("-----------------End of log-----------------");
 
 	// 4) Unbalance the tree by adding several numbers > 100.
-	randomTree.insertItem(1);
-	randomTree.insertItem(100);
-	randomTree.insertItem(50);
+	randomTree.insertItem(188);
+	randomTree.insertItem(123);
+	randomTree.insertItem(143);
+	randomTree.insertItem(199);
+	// Adding the values to the array just for the display.
+	randomArray.push(188, 123, 143, 199);
 
 	// 5) Confirm that the tree is unbalanced by calling isBalanced.
 	console.assert(
 		randomTree.isBalanced() == false,
 		"is Balanced should return false and not true"
 	);
-
 	// 6) Balance the tree by calling rebalance.
 	randomTree.rebalance();
 
@@ -347,74 +462,58 @@ function driverScript() {
 	);
 
 	// 8) Print out all elements in level, pre, post, and in order.
-	console.log(randomArray);
-	//---- Pre order
-	console.log("-----------------Pre-Order:-----------------");
-	randomTree.preOrder(printElement);
-	//---- Post order
-	console.log("-----------------Post-Order-----------------");
-	randomTree.postOrder(printElement);
-	//---- In order
-	console.log("-----------------In Order-----------------");
-	randomTree.inOrder(printElement);
-	console.log("-----------------End of log-----------------");
+	// console.log(randomArray);
+	// //---- Pre order
+	// console.log("-----------------Pre-Order:-----------------");
+	// randomTree.preOrder(printElement);
+	// //---- Post order
+	// console.log("-----------------Post-Order-----------------");
+	// randomTree.postOrder(printElement);
+	// //---- In order
+	// console.log("-----------------In Order-----------------");
+	// randomTree.inOrder(printElement);
+	// console.log("-----------------End of log-----------------");
 
 	// Other tests:
-	let balancedArray = [1, 2, 3, 4, 5, 6, 7];
-	let balancedTree = new Tree(buildTree(balancedArray));
+	let testArray = [1, 2, 3, 4, 5, 6, 7, 8];
+	let testTree = new Tree(buildTree(testArray));
+	console.log("-----------DELETE TEST SECTION-----------------|");
+
+	console.log(testTree);
+	testTree.inOrder(printElement);
+
+	testTree.deleteItem(2);
+	testTree.deleteItem(1);
+	testTree.deleteItem(7);
+	// testTree.deleteItem(60);
+	testTree.inOrder(printElement);
+	console.log("-----------DELETE TEST SECTION-----------------|");
+
+	// let parentNode = testTree.findParent(3);
+	// console.log("Should be 5: " + parentNode.data);
+	// parentNode = testTree.findParent(5);
+	// console.log("Should be undefined: " + parentNode);
+	// parentNode = testTree.findParent(8);
+	// console.log("Should be 7: " + parentNode.data);
+	// console.log(testTree);
 
 	console.assert(
-		balancedTree.isBalanced() != false,
+		testTree.isBalanced() != false,
 		"isBalanced should return true and not false"
 	);
 
+	// console.assert(
+	// 	testTree.findItem(7).data == 7,
+	// 	"Find Item should return the node with 7 as it's value"
+	// );
 	console.assert(
-		balancedTree.findItem(7).data == 7,
-		"Find Item should return the node with 7 as it's value"
+		testTree.findItem(4).data == 4,
+		"Find Item should return the node with 4 as it's value"
 	);
 	console.assert(
-		balancedTree.findItem(2).data == 2,
-		"Find Item should return the node with 2 as it's value"
-	);
-	console.assert(
-		balancedTree.findItem(20) == null,
+		testTree.findItem(20) == null,
 		"Find Item should return null since 20 is not in the tree."
 	);
-
-	let testArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-	let testTree = new Tree(buildTree(testArray));
-	testTree.insertItem(90);
-	testTree.insertItem(42);
-	testTree.insertItem(41);
-	testTree.insertItem(9);
-	// console.log(testTree.inOrder(printElement));
-	// console.log(testTree.depth(testTree.findItem(6)));
-	// console.log(testTree.depth(testTree.findItem(3)));
-	// console.log(testTree.depth(testTree.findItem(2)));
-	// console.log(testTree.depth(testTree.findItem(1)));
-	// console.log(testTree.depth(testTree.findItem(4)));
-	// console.log(testTree.depth(testTree.findItem(42)));
-	// console.log(testTree.depth(testTree.findItem(41)));
-	// console.log("-----------------------");
-	// console.log(testTree.height(testTree.findItem(6).rightChildren));
-	// console.log(testTree.height(testTree.findItem(6).leftChildren));
-	console.log("-----------------------");
-	console.log(balancedTree);
-	console.log(balancedTree.inOrder(printElement));
-	console.log(balancedTree.height(balancedTree.root.rightChildren));
-	console.log(balancedTree.height(balancedTree.root.leftChildren));
-	let heightArray = [1, 2, 3, 4, 5];
-	let heightTree = new Tree(buildTree(heightArray));
-	console.log(heightTree);
-	console.log(heightTree.height(heightTree.root.leftChildren));
-	console.log(heightTree.height(heightTree.root.rightChildren));
-	// console.log(testTree.height(testTree.findItem(41)));
-	// console.log(testTree.height(testTree.findItem(3)));
-	// console.log(testTree.depth(testTree.findItem(90)));
 }
 
 driverScript();
-
-// // A simple test using console.assert
-// console.assert(add(2, 2) === 4, 'add(2, 2) should equal 4');
-// console.assert(add(-1, 1) === 0, '-1 + 1 should equal 0');

@@ -88,3 +88,29 @@
 	// 	}
 	// 	return true;
 	// }
+
+
+		// if ((rightNode && !leftNode) || (leftNode && !rightNode)) {
+		// 	console.log("ONE CHILD IS NULL " + deleteNode.data);
+		// 	parentNode = this.findParent(deleteNode.data);
+		// 	if (!leftNode) {
+		// 		deleteNode.setNode(
+		// 			rightNode.data,
+		// 			rightNode.leftChildren,
+		// 			rightNode.rightChildren
+		// 		);
+		// 		parentNode.rightChildren = deleteNode;
+
+		// 		rightNode = null;
+		// 		console.log("LEFT NODE IS NULL");
+		// 	} else {
+		// 		deleteNode.setNode(
+		// 			leftNode.data,
+		// 			leftNode.leftChildren,
+		// 			leftNode.rightChildren
+		// 		);
+		// 		parentNode.leftChildren = deleteNode;
+
+		// 		leftNode = null;
+		// 		console.log("RIGHT NODE IS NULL");
+		// 	}
