@@ -66,31 +66,29 @@ class Tree {
 			}
 		}
 	}
-	deleteItem(deleteNode) {
-		if (deleteNode == null || deleteNode == undefined) {
+	deleteItem(deleteValue) {
+		if (deleteValue == null || deleteValue == undefined) {
 			return;
 		}
-		// TODO handle cases where the node to be deleted is the root node
-		if(deleteNode === this.root){
-			console.log("the node being deleted is the root");
-			return;
-		}
-
-
-		if (!this.findItem(deleteNode)) {
+		if (!this.findItem(deleteValue)) {
 			console.error("Item doesn't exist in tree.");
+			return;
+		}
+		let deleteNode = this.findItem(deleteValue);
+		// TODO handle cases where the node to be deleted is the root node
+		if (deleteNode === this.root) {
+			console.log("the node being deleted is the root");
 			return;
 		}
 
 		let rightNode = null;
 		let leftNode = null;
-		let parentNode = this.findParent(deleteNode);
+		let parentNode = this.findParent(deleteValue);
 		if (!parentNode) {
 			console.error("ERROR: Parent Node doesn't exist");
 			return;
 		}
 
-		deleteNode = this.findItem(deleteNode);
 		if (deleteNode.leftChildren) {
 			leftNode = deleteNode.leftChildren;
 		}
@@ -108,25 +106,20 @@ class Tree {
 			);
 			if (deleteNode.data > parentNode.data) {
 				parentNode.setNode(parentNode.data, parentNode.leftChildren, null);
-				console.log(parentNode);
 				deleteNode = null;
 			} else {
 				parentNode.setNode(parentNode.data, null, parentNode.rightChildren);
-				console.log(parentNode);
 			}
 		}
 
-		// Node with one child: Remove the node and replace it with its child. This way, the child takes the position of the deleted node, preserving the binary search tree property.
+		// TODO "consider the full process of finding the in-order successor/predecessor, moving its value up, and then properly removing the successor/predecessor node."
 		if ((rightNode && !leftNode) || (leftNode && !rightNode)) {
-			console.log("ONE CHILD IS NULL " + deleteNode.data);
 			if (!leftNode) {
-				console.log("Left Node doesn't exist.");
 				parentNode.setNode(
 					parentNode.data,
 					parentNode.leftChildren,
 					deleteNode.rightChildren
 				);
-				console.log(parentNode);
 				deleteNode = null;
 			} else {
 				parentNode.setNode(
@@ -134,7 +127,8 @@ class Tree {
 					deleteNode.leftChildren,
 					parentNode.rightChildren
 				);
-				console.log(parentNode);
+				// TODO determine if delete should be used rather than setting to null
+				// delete deleteNode;
 				deleteNode = null;
 			}
 		}
@@ -143,22 +137,28 @@ class Tree {
 		// replace the value of the node to be deleted with the found in-order successor or predecessor.
 		// Then, delete the in-order successor (or predecessor) node from the tree, which will now be a leaf node or a node with one child. This way, the binary search tree property is preserved.
 		if (rightNode && leftNode) {
-			parentNode = this.findParent(deleteNode.data);
 			console.log(
 				"BOTH CHILD IS NOT NULL DeleteNodeData:" +
 					deleteNode.data +
 					" PND: " +
 					parentNode.data
 			);
+			// Start down the right path and find the leftmost node from there
+			let currentNode = rightNode;
 
-			deleteNode.setNode(
-				deleteNode.rightChildren.data,
-				deleteNode.leftChildren,
-				null
-			);
-			console.log(
-				`Delete Node: ${deleteNode.data} DN Children: ${deleteNode.rightChildren} ${deleteNode.leftChildren.data}`
-			);
+			if (currentNode.leftChildren == null) {
+				deleteNode.setNode(currentNode.data, deleteNode.leftChildren, null);
+			} else {
+				while (currentNode.leftChildren) {
+					currentNode = currentNode.leftChildren;
+				}
+
+				deleteNode.setNode(
+					currentNode.data,
+					deleteNode.leftChildren,
+					deleteNode.rightChildren
+				);
+			}
 		}
 	}
 
@@ -181,7 +181,6 @@ class Tree {
 	}
 	findParent(value, inputNode = this.root) {
 		if (!inputNode) {
-			console.log(inputNode);
 			return;
 		}
 		let rightNode = null;
@@ -387,7 +386,6 @@ function levelOrder(callback) {
 		}
 		if (callback) {
 			callback(currentNode);
-			console.log("Callback was provided");
 		} else {
 			resultArray.push(currentNode);
 		}
@@ -409,9 +407,6 @@ function printElement(element) {
 		}
 		console.log(message);
 	}
-	// else {
-	// 	return;
-	// }
 }
 
 // Write a driver script that does the following:
@@ -479,7 +474,6 @@ function driverScript() {
 	let testTree = new Tree(buildTree(testArray));
 	console.log("-----------DELETE TEST SECTION-----------------|");
 
-	console.log(testTree);
 	testTree.inOrder(printElement);
 
 	testTree.deleteItem(2);
@@ -488,14 +482,6 @@ function driverScript() {
 	// testTree.deleteItem(60);
 	testTree.inOrder(printElement);
 	console.log("-----------DELETE TEST SECTION-----------------|");
-
-	// let parentNode = testTree.findParent(3);
-	// console.log("Should be 5: " + parentNode.data);
-	// parentNode = testTree.findParent(5);
-	// console.log("Should be undefined: " + parentNode);
-	// parentNode = testTree.findParent(8);
-	// console.log("Should be 7: " + parentNode.data);
-	// console.log(testTree);
 
 	console.assert(
 		testTree.isBalanced() != false,
