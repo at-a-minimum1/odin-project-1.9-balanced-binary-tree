@@ -33,7 +33,7 @@ class Tree {
 
 		return difference <= 1;
 	}
-	// TODO Write insert(value) and deleteItem(value) functions that insert/delete the given value. You’ll have to deal with several cases for delete, such as when a node has children or not. If you need additional resources, check out these two articles on inserting and deleting, or this video with several visual examples.
+
 	insertItem(value) {
 		if (value == null || value == undefined) {
 			return;
@@ -67,22 +67,33 @@ class Tree {
 		}
 	}
 	deleteItem(deleteValue) {
+		let successorNode = null;
+		let rightNode = null;
+		let leftNode = null;
 		if (deleteValue == null || deleteValue == undefined) {
 			return;
 		}
-		if (!this.findItem(deleteValue)) {
+
+		let deleteNode = this.findItem(deleteValue);
+		if (!deleteNode) {
 			console.error("Item doesn't exist in tree.");
 			return;
 		}
-		let deleteNode = this.findItem(deleteValue);
-		// TODO handle cases where the node to be deleted is the root node
+
+		// Case 1: The node to be deleted is the root node
 		if (deleteNode === this.root) {
-			console.log("the node being deleted is the root");
+			successorNode = this.findInOrderSuccessor(deleteNode);
+			let successorParentNode = this.findParent(successorNode.data);
+
+			deleteNode.setNode(
+				successorNode.data,
+				deleteNode.leftChildren,
+				deleteNode.rightChildren
+			);
+			successorParentNode.setNode(successorParentNode.data, null, null);
 			return;
 		}
 
-		let rightNode = null;
-		let leftNode = null;
 		let parentNode = this.findParent(deleteValue);
 		if (!parentNode) {
 			console.error("ERROR: Parent Node doesn't exist");
@@ -96,14 +107,8 @@ class Tree {
 			rightNode = deleteNode.rightChildren;
 		}
 
-		// 	Node with no children (Leaf node): Simply remove the node from the tree.
+		// Case 2: Node with no children (Leaf node)
 		if (rightNode == null && leftNode == null) {
-			console.log(
-				"BOTH CHILD IS NULL DND: " +
-					deleteNode.data +
-					" PND: " +
-					parentNode.data
-			);
 			if (deleteNode.data > parentNode.data) {
 				parentNode.setNode(parentNode.data, parentNode.leftChildren, null);
 				deleteNode = null;
@@ -111,8 +116,7 @@ class Tree {
 				parentNode.setNode(parentNode.data, null, parentNode.rightChildren);
 			}
 		}
-
-		// TODO "consider the full process of finding the in-order successor/predecessor, moving its value up, and then properly removing the successor/predecessor node."
+		// Case 3: Node with one child
 		if ((rightNode && !leftNode) || (leftNode && !rightNode)) {
 			if (!leftNode) {
 				parentNode.setNode(
@@ -127,39 +131,37 @@ class Tree {
 					deleteNode.leftChildren,
 					parentNode.rightChildren
 				);
-				// TODO determine if delete should be used rather than setting to null
-				// delete deleteNode;
 				deleteNode = null;
 			}
 		}
 
-		// Node with two children: Find the in-order successor of the node (the smallest node in its right subtree) or the in-order predecessor (the largest node in its left subtree), and
-		// replace the value of the node to be deleted with the found in-order successor or predecessor.
-		// Then, delete the in-order successor (or predecessor) node from the tree, which will now be a leaf node or a node with one child. This way, the binary search tree property is preserved.
+		// Case 4: Node with two children
 		if (rightNode && leftNode) {
-			console.log(
-				"BOTH CHILD IS NOT NULL DeleteNodeData:" +
-					deleteNode.data +
-					" PND: " +
-					parentNode.data
-			);
 			// Start down the right path and find the leftmost node from there
-			let currentNode = rightNode;
-
-			if (currentNode.leftChildren == null) {
-				deleteNode.setNode(currentNode.data, deleteNode.leftChildren, null);
-			} else {
-				while (currentNode.leftChildren) {
-					currentNode = currentNode.leftChildren;
-				}
-
+			if (deleteNode.rightChildren.leftChildren == null) {
 				deleteNode.setNode(
-					currentNode.data,
+					deleteNode.rightChildren.data,
 					deleteNode.leftChildren,
-					deleteNode.rightChildren
+					null
+				);
+			} else {
+				successorNode = this.findInOrderSuccessor(deleteNode);
+				deleteNode.setNode(
+					successorNode.data,
+					deleteNode.rightChildren,
+					deleteNode.leftChildren
 				);
 			}
 		}
+	}
+
+	findInOrderSuccessor(currentNode) {
+		currentNode = currentNode.rightChildren;
+
+		while (currentNode.leftChildren) {
+			currentNode = currentNode.leftChildren;
+		}
+		return currentNode;
 	}
 
 	findItem(value, inputNode = this.root) {
@@ -479,6 +481,7 @@ function driverScript() {
 	testTree.deleteItem(2);
 	testTree.deleteItem(1);
 	testTree.deleteItem(7);
+	testTree.deleteItem(5);
 	// testTree.deleteItem(60);
 	testTree.inOrder(printElement);
 	console.log("-----------DELETE TEST SECTION-----------------|");
